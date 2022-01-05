@@ -1,0 +1,1692 @@
+{
+	"info": {
+		"_postman_id": "018d0282-3058-4760-9790-5f0f3166335b",
+		"name": "Kerjain",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Auth-Check Email",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const email = [\"as@mailinator.com\", \"geelangtester@gmail.com\"];\r",
+									"const random = Math.floor(Math.random() * email.length);\r",
+									"\r",
+									"pm.variables.set(\"email\", email[random]);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Schema\r",
+									"const checkEmailSchema = {\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"data\"\r",
+									"    ],\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\",\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\",\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"required\": [\r",
+									"                \"email\"\r",
+									"            ],\r",
+									"            \"properties\": {\r",
+									"                \"email\": {\r",
+									"                    \"type\": \"string\",\r",
+									"\r",
+									"                }\r",
+									"            }\r",
+									"        }\r",
+									"\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"//Test\r",
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Schema validation \", function () {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(checkEmailSchema)\r",
+									"});\r",
+									"\r",
+									"let email = pm.variables.get(\"email\");\r",
+									"console.log(email);\r",
+									"\r",
+									"if (email === \"as@mailinator.com\") {\r",
+									"    pm.test(\"Check email available\", () => {\r",
+									"        pm.expect(jsonData.message).to.be.eql(\"Email is available\");\r",
+									"    });\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"} else if (email == \"geelangtester@gmail.com\") {\r",
+									"    pm.test(\"Check email unavaialable\", () => {\r",
+									"        pm.expect(jsonData.message).to.be.eql(\"Email is used\")\r",
+									"    })\r",
+									"    pm.test(\"Status code is 400\", function () {\r",
+									"        pm.response.to.have.status(400);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "email",
+									"value": "{{email}}",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/auth/check-email",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"check-email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auth-Login",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const password = [\"U2FsdGVkX19JdZoqDN9rDHKQ+EGurlRyGyt3ONnw6Ns=\", \"wrong password\"];\r",
+									"\r",
+									"const random = Math.floor(Math.random() * password.length);\r",
+									"\r",
+									"pm.variables.set(\"Password\", password[random]);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"let jsonData = pm.response.json()\r",
+									"\r",
+									"const authLoginSchemaSuccess = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"token\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"user\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"isProfileCompleted\": {\r",
+									"                    \"type\": \"boolean\"\r",
+									"                },\r",
+									"                \"dateOfBirth\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"jobSpecialty\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"jobSeniority\": {\r",
+									"                    \"type\": \"integer\"\r",
+									"                },\r",
+									"                \"ratePerDay\": {\r",
+									"                    \"type\": \"integer\"\r",
+									"                },\r",
+									"                \"_id\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"emailAddress\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"type\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"createdAt\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"updatedAt\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"city\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"fullName\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"gender\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"userName\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"__v\": {\r",
+									"                    \"type\": \"integer\"\r",
+									"                },\r",
+									"                \"imageProfile\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"name\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"url\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"required\": [\r",
+									"                        \"name\",\r",
+									"                        \"url\"\r",
+									"                    ]\r",
+									"                },\r",
+									"                \"forgot_password_expire\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                },\r",
+									"                \"forgot_password_token\": {\r",
+									"                    \"type\": \"string\"\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\r",
+									"                \"isProfileCompleted\",\r",
+									"                \"dateOfBirth\",\r",
+									"                \"jobSpecialty\",\r",
+									"                \"jobSeniority\",\r",
+									"                \"ratePerDay\",\r",
+									"                \"_id\",\r",
+									"                \"emailAddress\",\r",
+									"                \"type\",\r",
+									"                \"createdAt\",\r",
+									"                \"updatedAt\",\r",
+									"                \"city\",\r",
+									"                \"fullName\",\r",
+									"                \"gender\",\r",
+									"                \"userName\",\r",
+									"                \"__v\",\r",
+									"                \"imageProfile\",\r",
+									"                \"forgot_password_expire\",\r",
+									"                \"forgot_password_token\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"token\",\r",
+									"        \"user\"\r",
+									"    ]\r",
+									"}\r",
+									"\r",
+									"const authLoginSchemaFailed = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"err_code\": {\r",
+									"            \"type\": \"integer\"\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\"\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"err_code\",\r",
+									"        \"data\"\r",
+									"    ]\r",
+									"}\r",
+									"\r",
+									"let passwords = pm.variables.get(\"Password\");\r",
+									"\r",
+									"if (passwords == \"U2FsdGVkX19JdZoqDN9rDHKQ+EGurlRyGyt3ONnw6Ns=\") {\r",
+									"    pm.test(\"Successful POST request\", function () {\r",
+									"        pm.expect(pm.response.code).to.be.oneOf([200, 202]);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Schema validation \", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData).to.have.jsonSchema(authLoginSchemaSuccess)\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Body matches string\", function () {\r",
+									"        pm.expect(pm.response.text()).to.include(\"token\");\r",
+									"    });\r",
+									"\r",
+									"    pm.collectionVariables.set(\"token\", jsonData.token);\r",
+									"    pm.collectionVariables.set(\"username\", jsonData.user.userName);\r",
+									"\r",
+									"\r",
+									"\r",
+									"} else if (passwords == \"wrong password\") {\r",
+									"    pm.test(\"Failed POST failed\", function () {\r",
+									"        pm.expect(pm.response.code).to.be.eql(400);\r",
+									"    });\r",
+									"\r",
+									"    pm.test(\"Schema validation \", function () {\r",
+									"        pm.expect(jsonData).to.have.jsonSchema(authLoginSchemaFailed)\r",
+									"    });\r",
+									"\r",
+									"\r",
+									"}\r",
+									"\r",
+									"//Test\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"emailAddress\": \"geelangtester@gmail.com\",\r\n    \"password\": \"{{Password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/auth/token",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auth-Forgot Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/auth/forgot-password",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Auth-Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "password",
+								"value": "U2FsdGVkX1/tYc9NECUl7BUvDnQ3P8EG8MH12VUWBLM=",
+								"type": "default"
+							},
+							{
+								"key": "password_confirmation",
+								"value": "U2FsdGVkX1/tYc9NECUl7BUvDnQ3P8EG8MH12VUWBLM=",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/auth/change-password?token=randomtoken",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "randomtoken"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "User - index",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"const getUserSchema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"user\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"isProfileCompleted\": {\r",
+									"                            \"type\": \"boolean\"\r",
+									"                        },\r",
+									"                        \"dateOfBirth\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"jobSpecialty\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"jobSeniority\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"ratePerDay\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"_id\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"emailAddress\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"type\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"createdAt\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"updatedAt\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"city\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"fullName\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"gender\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"userName\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"__v\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"imageProfile\": {\r",
+									"                            \"type\": \"object\",\r",
+									"                            \"properties\": {\r",
+									"                                \"name\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"url\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                }\r",
+									"                            },\r",
+									"                            \"required\": [\r",
+									"                                \"name\",\r",
+									"                                \"url\"\r",
+									"                            ]\r",
+									"                        },\r",
+									"                        \"forgot_password_expire\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"forgot_password_token\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"required\": [\r",
+									"                        \"isProfileCompleted\",\r",
+									"                        \"dateOfBirth\",\r",
+									"                        \"jobSpecialty\",\r",
+									"                        \"jobSeniority\",\r",
+									"                        \"ratePerDay\",\r",
+									"                        \"_id\",\r",
+									"                        \"emailAddress\",\r",
+									"                        \"type\",\r",
+									"                        \"createdAt\",\r",
+									"                        \"updatedAt\",\r",
+									"                        \"city\",\r",
+									"                        \"fullName\",\r",
+									"                        \"gender\",\r",
+									"                        \"userName\",\r",
+									"                        \"__v\",\r",
+									"                        \"imageProfile\",\r",
+									"                        \"forgot_password_expire\",\r",
+									"                        \"forgot_password_token\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\r",
+									"                \"user\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"data\"\r",
+									"    ]\r",
+									"}\r",
+									"// get variables\r",
+									"let username = pm.collectionVariables.get(\"username\")\r",
+									"\r",
+									"// Test \r",
+									"pm.test(\"Schema Validation\", () => {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(getUserSchema)\r",
+									"\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Username is correct\", () => {\r",
+									"    pm.expect(jsonData.data.user.userName).to.eql(username);\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User - Update",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Parse the Response Data\", function () {\r",
+									"    pm.expect(jsonData[\"message\"]).to.eql(\"Success update profile\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"const updateUserSchema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"user\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"isProfileCompleted\": {\r",
+									"                            \"type\": \"boolean\"\r",
+									"                        },\r",
+									"                        \"dateOfBirth\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"jobSpecialty\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"jobSeniority\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"ratePerDay\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"_id\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"emailAddress\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"type\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"createdAt\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"updatedAt\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"city\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"fullName\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"gender\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"userName\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"__v\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"imageProfile\": {\r",
+									"                            \"type\": \"object\",\r",
+									"                            \"properties\": {\r",
+									"                                \"name\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"url\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                }\r",
+									"                            },\r",
+									"                            \"required\": [\r",
+									"                                \"name\",\r",
+									"                                \"url\"\r",
+									"                            ]\r",
+									"                        },\r",
+									"                        \"forgot_password_expire\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"forgot_password_token\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"required\": [\r",
+									"                        \"isProfileCompleted\",\r",
+									"                        \"dateOfBirth\",\r",
+									"                        \"jobSpecialty\",\r",
+									"                        \"jobSeniority\",\r",
+									"                        \"ratePerDay\",\r",
+									"                        \"_id\",\r",
+									"                        \"emailAddress\",\r",
+									"                        \"type\",\r",
+									"                        \"createdAt\",\r",
+									"                        \"updatedAt\",\r",
+									"                        \"city\",\r",
+									"                        \"fullName\",\r",
+									"                        \"gender\",\r",
+									"                        \"userName\",\r",
+									"                        \"__v\",\r",
+									"                        \"imageProfile\",\r",
+									"                        \"forgot_password_expire\",\r",
+									"                        \"forgot_password_token\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\r",
+									"                \"user\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"data\"\r",
+									"    ]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Check Schema \", () => {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(updateUserSchema)\r",
+									"})\r",
+									"\r",
+									"let fullname = pm.collectionVariables.get(\"fullname\");\r",
+									"let username = pm.collectionVariables.get(\"username\");\r",
+									"let gender = pm.collectionVariables.get(\"gender\");\r",
+									"\r",
+									"pm.test(\"Check data after update\", () => {\r",
+									"    pm.expect(jsonData.data.user.fullName).to.be.eql(fullname.toLowerCase());\r",
+									"    pm.expect(jsonData.data.user.userName).to.be.eql(username);\r",
+									"    pm.expect(jsonData.data.user.gender).to.be.eql(gender);\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// custom random data\r",
+									"const randomGender = [\"male\", \"female\"];\r",
+									"const random = Math.floor(Math.random() * randomGender.length);\r",
+									"pm.collectionVariables.set(\"gender\", randomGender[random]);\r",
+									"\r",
+									"\r",
+									"// declare random data and set as collection variables\r",
+									"pm.collectionVariables.set(\"username\", (pm.variables.replaceIn(\"{{$randomFirstName}}\")));\r",
+									"pm.collectionVariables.set(\"fullname\", (pm.variables.replaceIn(\"{{$randomFullName}}\")));\r",
+									"pm.collectionVariables.set(\"image\", (pm.variables.replaceIn(\"{{$randomBusinessImage}}\")));\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "userName",
+									"value": "{{username}}",
+									"type": "default"
+								},
+								{
+									"key": "jobSpecialty",
+									"value": "Construction",
+									"type": "default"
+								},
+								{
+									"key": "jobSeniority",
+									"value": "4",
+									"type": "default"
+								},
+								{
+									"key": "fullName",
+									"value": "{{fullname}}",
+									"type": "default"
+								},
+								{
+									"key": "emailAddress",
+									"value": "geelangtester@gmail.com",
+									"type": "default"
+								},
+								{
+									"key": "gender",
+									"value": "{{gender}}",
+									"type": "default"
+								},
+								{
+									"key": "city",
+									"value": "Yogyakarta",
+									"type": "default"
+								},
+								{
+									"key": "ratePerDay",
+									"value": "3000000",
+									"type": "default"
+								},
+								{
+									"key": "dateOfBirth",
+									"value": "07-09-1997",
+									"type": "default"
+								},
+								{
+									"key": "imageProfile",
+									"value": "{{$randomImageUrl}}",
+									"type": "default"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/users/update-profile",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users",
+								"update-profile"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "noauth"
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Workers",
+			"item": [
+				{
+					"name": "Workers-Index",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"const getWorkersSchema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"workers\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"results\": {\r",
+									"                            \"type\": \"array\",\r",
+									"                            \"items\": [\r",
+									"                                {\r",
+									"                                    \"type\": \"object\",\r",
+									"                                    \"properties\": {\r",
+									"                                        \"isProfileCompleted\": {\r",
+									"                                            \"type\": \"boolean\"\r",
+									"                                        },\r",
+									"                                        \"dateOfBirth\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"jobSpecialty\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"jobSeniority\": {\r",
+									"                                            \"type\": \"integer\"\r",
+									"                                        },\r",
+									"                                        \"ratePerDay\": {\r",
+									"                                            \"type\": \"integer\"\r",
+									"                                        },\r",
+									"                                        \"_id\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"emailAddress\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"type\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"createdAt\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"updatedAt\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"__v\": {\r",
+									"                                            \"type\": \"integer\"\r",
+									"                                        },\r",
+									"                                        \"city\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"fullName\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"gender\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"imageProfile\": {\r",
+									"                                            \"type\": \"object\",\r",
+									"                                            \"properties\": {\r",
+									"                                                \"name\": {\r",
+									"                                                    \"type\": \"string\"\r",
+									"                                                },\r",
+									"                                                \"url\": {\r",
+									"                                                    \"type\": \"string\"\r",
+									"                                                }\r",
+									"                                            },\r",
+									"                                            \"required\": [\r",
+									"                                                \"name\",\r",
+									"                                                \"url\"\r",
+									"                                            ]\r",
+									"                                        },\r",
+									"                                        \"userName\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        }\r",
+									"                                    },\r",
+									"                                    \"required\": [\r",
+									"                                        \"isProfileCompleted\",\r",
+									"                                        \"dateOfBirth\",\r",
+									"                                        \"jobSpecialty\",\r",
+									"                                        \"jobSeniority\",\r",
+									"                                        \"ratePerDay\",\r",
+									"                                        \"_id\",\r",
+									"                                        \"emailAddress\",\r",
+									"                                        \"type\",\r",
+									"                                        \"createdAt\",\r",
+									"                                        \"updatedAt\",\r",
+									"                                        \"__v\",\r",
+									"                                        \"city\",\r",
+									"                                        \"fullName\",\r",
+									"                                        \"gender\",\r",
+									"                                        \"imageProfile\",\r",
+									"                                        \"userName\"\r",
+									"                                    ]\r",
+									"                                }\r",
+									"                            ]\r",
+									"                        },\r",
+									"                        \"page\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"limit\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"totalPages\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"totalResults\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"required\": [\r",
+									"                        \"results\",\r",
+									"                        \"page\",\r",
+									"                        \"limit\",\r",
+									"                        \"totalPages\",\r",
+									"                        \"totalResults\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\r",
+									"                \"workers\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"data\"\r",
+									"    ]\r",
+									"}\r",
+									"\r",
+									"\r",
+									"//Test\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status message success\", function () {\r",
+									"    pm.expect(jsonData.message).to.be.eql(\"Success retrieve all worker\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Schema success\", () => {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(getWorkersSchema);\r",
+									"})\r",
+									"\r",
+									"\r",
+									"const results = jsonData.data.workers.results\r",
+									"const workersSchema = getWorkersSchema.properties.data.properties.workers.properties.results.items[0];\r",
+									"eval(pm.collectionVariables.get(\"NestedSchemaValidation\"))\r",
+									"    (\"Workers\", getWorkersSchema, jsonData, \"Worker\", workersSchema, results);\r",
+									"\r",
+									"\r",
+									"// get random workerId\r",
+									"let amountWorker = (jsonData.data.workers.results).length;\r",
+									"let randomIndexWorker = Math.floor(Math.random() * amountWorker);\r",
+									"let randomWorkerId = jsonData.data.workers.results[randomIndexWorker]._id;\r",
+									"let getNameRandomWorkerId = jsonData.data.workers.results[randomIndexWorker].userName;\r",
+									"\r",
+									"pm.collectionVariables.set(\"RandomWorkerId\",randomWorkerId);\r",
+									"pm.collectionVariables.set(\"UserNameRandomWorkerId\", getNameRandomWorkerId)\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/workers",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"workers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "jobSpecialty",
+									"value": "Construction",
+									"disabled": true
+								},
+								{
+									"key": "jobSeniority",
+									"value": "4",
+									"disabled": true
+								},
+								{
+									"key": "ratePerDay",
+									"value": "300000",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "male",
+									"disabled": true
+								},
+								{
+									"key": "city",
+									"value": "sumatera utara",
+									"disabled": true
+								},
+								{
+									"key": "jobSeniority[$gte]",
+									"value": "6",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "2",
+									"disabled": true
+								},
+								{
+									"key": "job",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "dateOfBirth",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Workers-Filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"const getWorkersSchema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"workers\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"results\": {\r",
+									"                            \"type\": \"array\",\r",
+									"                            \"items\": [\r",
+									"                                {\r",
+									"                                    \"type\": \"object\",\r",
+									"                                    \"properties\": {\r",
+									"                                        \"isProfileCompleted\": {\r",
+									"                                            \"type\": \"boolean\"\r",
+									"                                        },\r",
+									"                                        \"dateOfBirth\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"jobSpecialty\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"jobSeniority\": {\r",
+									"                                            \"type\": \"integer\"\r",
+									"                                        },\r",
+									"                                        \"ratePerDay\": {\r",
+									"                                            \"type\": \"integer\"\r",
+									"                                        },\r",
+									"                                        \"_id\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"emailAddress\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"type\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"createdAt\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"updatedAt\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"__v\": {\r",
+									"                                            \"type\": \"integer\"\r",
+									"                                        },\r",
+									"                                        \"city\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"fullName\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"gender\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        },\r",
+									"                                        \"imageProfile\": {\r",
+									"                                            \"type\": \"object\",\r",
+									"                                            \"properties\": {\r",
+									"                                                \"name\": {\r",
+									"                                                    \"type\": \"string\"\r",
+									"                                                },\r",
+									"                                                \"url\": {\r",
+									"                                                    \"type\": \"string\"\r",
+									"                                                }\r",
+									"                                            },\r",
+									"                                            \"required\": [\r",
+									"                                                \"name\",\r",
+									"                                                \"url\"\r",
+									"                                            ]\r",
+									"                                        },\r",
+									"                                        \"userName\": {\r",
+									"                                            \"type\": \"string\"\r",
+									"                                        }\r",
+									"                                    },\r",
+									"                                    \"required\": [\r",
+									"                                        \"isProfileCompleted\",\r",
+									"                                        \"dateOfBirth\",\r",
+									"                                        \"jobSpecialty\",\r",
+									"                                        \"jobSeniority\",\r",
+									"                                        \"ratePerDay\",\r",
+									"                                        \"_id\",\r",
+									"                                        \"emailAddress\",\r",
+									"                                        \"type\",\r",
+									"                                        \"createdAt\",\r",
+									"                                        \"updatedAt\",\r",
+									"                                        \"__v\",\r",
+									"                                        \"city\",\r",
+									"                                        \"fullName\",\r",
+									"                                        \"gender\",\r",
+									"                                        \"imageProfile\",\r",
+									"                                        \"userName\"\r",
+									"                                    ]\r",
+									"                                }\r",
+									"                            ]\r",
+									"                        },\r",
+									"                        \"page\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"limit\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"totalPages\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"totalResults\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"required\": [\r",
+									"                        \"results\",\r",
+									"                        \"page\",\r",
+									"                        \"limit\",\r",
+									"                        \"totalPages\",\r",
+									"                        \"totalResults\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\r",
+									"                \"workers\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"data\"\r",
+									"    ]\r",
+									"}\r",
+									"\r",
+									"\r",
+									"//Test\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Status message success\", function () {\r",
+									"    pm.expect(jsonData.message).to.be.eql(\"Success retrieve all worker\")\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Schema success\", () => {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(getWorkersSchema);\r",
+									"})\r",
+									"\r",
+									"// test Schema validation\r",
+									"const results = jsonData.data.workers.results\r",
+									"const workersSchema = getWorkersSchema.properties.data.properties.workers.properties.results.items[0];\r",
+									"eval(pm.collectionVariables.get(\"NestedSchemaValidation\"))\r",
+									"    (\"Workers\", getWorkersSchema, jsonData, \"Worker\", workersSchema, results);\r",
+									"\r",
+									"\r",
+									"\r",
+									"// get random workerId\r",
+									"let amountWorker = (jsonData.data.workers.results).length;\r",
+									"let randomIndexWorker = Math.floor(Math.random() * amountWorker);\r",
+									"let randomWorkerId = jsonData.data.workers.results[randomIndexWorker]._id;\r",
+									"let getNameRandomWorkerId = jsonData.data.workers.results[randomIndexWorker].userName;\r",
+									"// set random workerId and username\r",
+									"pm.collectionVariables.set(\"RandomWorkerId\",randomWorkerId);\r",
+									"pm.collectionVariables.set(\"UserNameRandomWorkerId\", getNameRandomWorkerId)\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// random number\r",
+									"const randomNumber = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
+									"const random = Math.floor(Math.random() * randomNumber);\r",
+									"pm.collectionVariables.set(randomNumber[random]);\r",
+									"\r",
+									"// random gender\r",
+									"const randomGender = [\"male\", \"female\"];\r",
+									"const randomGenderIndex = Math.floor(Math.random() * randomGender.length);\r",
+									"pm.collectionVariables.set(\"gender\", randomGender[randomGenderIndex]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/workers?page=1&jobSpecialty=Construction&jobSeniority=4&gender={{gender}}&limit={{randomNumber}}",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"workers"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "jobSpecialty",
+									"value": "Construction"
+								},
+								{
+									"key": "jobSeniority",
+									"value": "4"
+								},
+								{
+									"key": "ratePerDay",
+									"value": "300000",
+									"disabled": true
+								},
+								{
+									"key": "gender",
+									"value": "{{gender}}"
+								},
+								{
+									"key": "city",
+									"value": "sumatera utara",
+									"disabled": true
+								},
+								{
+									"key": "jobSeniority[$gte]",
+									"value": "6",
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": "{{randomNumber}}"
+								},
+								{
+									"key": "job",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "dateOfBirth",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "limit",
+									"value": null,
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Workers-Detail",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"const workerDetailsSchema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"worker\": {\r",
+									"                    \"type\": \"object\",\r",
+									"                    \"properties\": {\r",
+									"                        \"isProfileCompleted\": {\r",
+									"                            \"type\": \"boolean\"\r",
+									"                        },\r",
+									"                        \"dateOfBirth\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"jobSpecialty\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"jobSeniority\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"ratePerDay\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"_id\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"emailAddress\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"type\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"createdAt\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"updatedAt\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"__v\": {\r",
+									"                            \"type\": \"integer\"\r",
+									"                        },\r",
+									"                        \"city\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"fullName\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"gender\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        },\r",
+									"                        \"imageProfile\": {\r",
+									"                            \"type\": \"object\",\r",
+									"                            \"properties\": {\r",
+									"                                \"name\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"url\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                }\r",
+									"                            },\r",
+									"                            \"required\": [\r",
+									"                                \"name\",\r",
+									"                                \"url\"\r",
+									"                            ]\r",
+									"                        },\r",
+									"                        \"userName\": {\r",
+									"                            \"type\": \"string\"\r",
+									"                        }\r",
+									"                    },\r",
+									"                    \"required\": [\r",
+									"                        \"isProfileCompleted\",\r",
+									"                        \"dateOfBirth\",\r",
+									"                        \"jobSpecialty\",\r",
+									"                        \"jobSeniority\",\r",
+									"                        \"ratePerDay\",\r",
+									"                        \"_id\",\r",
+									"                        \"emailAddress\",\r",
+									"                        \"type\",\r",
+									"                        \"createdAt\",\r",
+									"                        \"updatedAt\",\r",
+									"                        \"__v\",\r",
+									"                        \"city\",\r",
+									"                        \"fullName\",\r",
+									"                        \"gender\",\r",
+									"                        \"imageProfile\",\r",
+									"                        \"userName\"\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\r",
+									"                \"worker\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"data\"\r",
+									"    ]\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Schema success\", () => {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(workerDetailsSchema);\r",
+									"})\r",
+									"\r",
+									"// get variable \r",
+									"let randomUserName = pm.collectionVariables.get(\"UserNameRandomWorkerId\");\r",
+									"let randomWorkerId = pm.collectionVariables.get(\"RandomWorkerId\");\r",
+									"\r",
+									"pm.test(\"Detail data\", () => {\r",
+									"    pm.expect(jsonData.data.worker._id).to.be.eql(randomWorkerId);\r",
+									"    pm.expect(jsonData.data.worker.userName).to.be.eql(randomUserName);\r",
+									"})\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/workers/:workerId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"workers",
+								":workerId"
+							],
+							"variable": [
+								{
+									"key": "workerId",
+									"value": "{{RandomWorkerId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Response time is less than 1500ms\", function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(1500);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "token",
+			"value": ""
+		},
+		{
+			"key": "emailAddres",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "fullname",
+			"value": ""
+		},
+		{
+			"key": "image",
+			"value": ""
+		},
+		{
+			"key": "gender",
+			"value": ""
+		},
+		{
+			"key": "NestedSchemaValidation",
+			"value": "\n    (name, schema1, schemaIndex, name2, schema2, schemaIndex2) => {\n    for (let response in schemaIndex) {\n        pm.test(name + \" schema validation \" + response, function () {\n            pm.expect(schemaIndex).to.have.jsonSchema(schema1)\n        })\n        for (let response2 in schemaIndex2) {\n            pm.test(name2 + \" schema validation \" + response2, function () {\n                pm.expect(schemaIndex2[response2]).to.have.jsonSchema(schema2)\n            })\n        }\n    }\n}",
+			"type": "string"
+		},
+		{
+			"key": "SchemaValidation",
+			"value": "(name, schema1, schemaIndex) => {\n    for (let response in schemaIndex) {\n        pm.test(name + \" schema validation \" + response, () => {\n            pm.expect(schemaIndex[response]).to.have.jsonSchema(schema1)\n        })\n    }\n}",
+			"type": "string"
+		},
+		{
+			"key": "619dcc72efdfcc001de286f9",
+			"value": ""
+		},
+		{
+			"key": "RandomWorkerId",
+			"value": ""
+		},
+		{
+			"key": "FullNameRandomWorkerId",
+			"value": ""
+		},
+		{
+			"key": "UserNameRandomWorkerId",
+			"value": ""
+		},
+		{
+			"value": ""
+		}
+	]
+}
