@@ -291,6 +291,7 @@
 									"\r",
 									"    pm.collectionVariables.set(\"token\", jsonData.token);\r",
 									"    pm.collectionVariables.set(\"username\", jsonData.user.userName);\r",
+									"    pm.collectionVariables.set(\"emailLogin\", jsonData.user.emailAddress);\r",
 									"\r",
 									"\r",
 									"\r",
@@ -342,6 +343,55 @@
 				},
 				{
 					"name": "Auth-Forgot Password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"const forgotPasswordSchema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\"\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"data\"\r",
+									"    ]\r",
+									"}\r",
+									"\r",
+									"// Test\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"pm.test(\"success schema\", () => {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(forgotPasswordSchema);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"success data\", () => {\r",
+									"    pm.expect(jsonData.success).to.be.equal(true);\r",
+									"    pm.expect(jsonData.message).to.be.eql(\"email have been send to given address\");\r",
+									"\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -355,6 +405,16 @@
 						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "emailAddress",
+									"value": "{{emailLogin}}",
+									"type": "default"
+								}
+							]
+						},
 						"url": {
 							"raw": "{{URL}}/auth/forgot-password",
 							"host": [
@@ -1686,6 +1746,10 @@
 			"value": ""
 		},
 		{
+			"value": ""
+		},
+		{
+			"key": "emailLogin",
 			"value": ""
 		}
 	]
