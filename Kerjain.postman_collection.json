@@ -9,7 +9,7 @@
 			"name": "Auth",
 			"item": [
 				{
-					"name": "Auth-Check Email",
+					"name": "Success-Check Email",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -123,7 +123,7 @@
 					"response": []
 				},
 				{
-					"name": "Auth-Login",
+					"name": "Sucess-Login",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -292,6 +292,8 @@
 									"    pm.collectionVariables.set(\"token\", jsonData.token);\r",
 									"    pm.collectionVariables.set(\"username\", jsonData.user.userName);\r",
 									"    pm.collectionVariables.set(\"emailLogin\", jsonData.user.emailAddress);\r",
+									"    pm.collectionVariables.set(\"userId\", jsonData.user._id);\r",
+									"\r",
 									"\r",
 									"\r",
 									"\r",
@@ -342,7 +344,7 @@
 					"response": []
 				},
 				{
-					"name": "Auth-Forgot Password",
+					"name": "Sucess-Forgot Password",
 					"event": [
 						{
 							"listen": "test",
@@ -429,7 +431,7 @@
 					"response": []
 				},
 				{
-					"name": "Auth-Change Password",
+					"name": "Sucess-Change Password",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -502,7 +504,7 @@
 			"name": "User",
 			"item": [
 				{
-					"name": "User - index",
+					"name": "Sucess-Get-User-index",
 					"event": [
 						{
 							"listen": "test",
@@ -672,7 +674,7 @@
 					"response": []
 				},
 				{
-					"name": "User - Update",
+					"name": "Sucess-Update-User",
 					"event": [
 						{
 							"listen": "test",
@@ -933,7 +935,14 @@
 				}
 			],
 			"auth": {
-				"type": "noauth"
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
 			},
 			"event": [
 				{
@@ -960,7 +969,7 @@
 			"name": "Workers",
 			"item": [
 				{
-					"name": "Workers-Index",
+					"name": "Success-Get-Workers-Index",
 					"event": [
 						{
 							"listen": "test",
@@ -1122,8 +1131,8 @@
 									"\r",
 									"const results = jsonData.data.workers.results\r",
 									"const workersSchema = getWorkersSchema.properties.data.properties.workers.properties.results.items[0];\r",
-									"eval(pm.collectionVariables.get(\"NestedSchemaValidation\"))\r",
-									"    (\"Workers\", getWorkersSchema, jsonData, \"Worker\", workersSchema, results);\r",
+									"eval(pm.collectionVariables.get(\"SchemaValidation\"))\r",
+									"    (\"Worker\", workersSchema, results);\r",
 									"\r",
 									"\r",
 									"// get random workerId\r",
@@ -1220,7 +1229,7 @@
 					"response": []
 				},
 				{
-					"name": "Workers-Filter",
+					"name": "Success-Get-Workers-Filter",
 					"event": [
 						{
 							"listen": "test",
@@ -1382,8 +1391,8 @@
 									"// test Schema validation\r",
 									"const results = jsonData.data.workers.results\r",
 									"const workersSchema = getWorkersSchema.properties.data.properties.workers.properties.results.items[0];\r",
-									"eval(pm.collectionVariables.get(\"NestedSchemaValidation\"))\r",
-									"    (\"Workers\", getWorkersSchema, jsonData, \"Worker\", workersSchema, results);\r",
+									"eval(pm.collectionVariables.get(\"SchemaValidation\"))\r",
+									"    (\"Worker\", workersSchema, results);\r",
 									"\r",
 									"\r",
 									"\r",
@@ -1409,7 +1418,7 @@
 									"// random number\r",
 									"const randomNumber = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];\r",
 									"const random = Math.floor(Math.random() * randomNumber);\r",
-									"pm.collectionVariables.set(randomNumber[random]);\r",
+									"pm.collectionVariables.set(\"randomNumber\", randomNumber[random]);\r",
 									"\r",
 									"// random gender\r",
 									"const randomGender = [\"male\", \"female\"];\r",
@@ -1424,7 +1433,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{URL}}/workers?page=1&jobSpecialty=Construction&jobSeniority=4&gender={{gender}}&limit={{randomNumber}}",
+							"raw": "{{URL}}/workers?page=1&jobSeniority=4&gender={{gender}}&limit={{randomNumber}}",
 							"host": [
 								"{{URL}}"
 							],
@@ -1438,7 +1447,8 @@
 								},
 								{
 									"key": "jobSpecialty",
-									"value": "Construction"
+									"value": "Construction",
+									"disabled": true
 								},
 								{
 									"key": "jobSeniority",
@@ -1469,22 +1479,22 @@
 								},
 								{
 									"key": "job",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "dateOfBirth",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "limit",
-									"value": null,
+									"value": "",
 									"disabled": true
 								},
 								{
 									"key": "sortBy",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
@@ -1493,7 +1503,7 @@
 					"response": []
 				},
 				{
-					"name": "Workers-Detail",
+					"name": "Sucess-Get-Workers-Detail",
 					"event": [
 						{
 							"listen": "prerequest",
@@ -1669,6 +1679,359 @@
 					},
 					"response": []
 				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Contract",
+			"item": [
+				{
+					"name": "Succes-Get-Contract",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//set svariable\r",
+									"const jsonData = pm.response.json();\r",
+									"const succesGetContractSchema = {\r",
+									"    \"type\": \"object\",\r",
+									"    \"properties\": {\r",
+									"        \"success\": {\r",
+									"            \"type\": \"boolean\"\r",
+									"        },\r",
+									"        \"message\": {\r",
+									"            \"type\": \"string\"\r",
+									"        },\r",
+									"        \"data\": {\r",
+									"            \"type\": \"object\",\r",
+									"            \"properties\": {\r",
+									"                \"data\": {\r",
+									"                    \"type\": \"array\",\r",
+									"                    \"items\": [\r",
+									"                        {\r",
+									"                            \"type\": \"object\",\r",
+									"                            \"properties\": {\r",
+									"                                \"_id\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"worker\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"employeer\": {\r",
+									"                                    \"type\": [\"null\", \"string\"]\r",
+									"                                },\r",
+									"                                \"job\": {\r",
+									"                                    \"type\": [\"null\", \"string\"]\r",
+									"                                },\r",
+									"                                \"fileAttach\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"flagViolation\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"violationDescription\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"status\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"startDate\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"dueDate\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"createdAt\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"updatedAt\": {\r",
+									"                                    \"type\": \"string\"\r",
+									"                                },\r",
+									"                                \"__v\": {\r",
+									"                                    \"type\": \"integer\"\r",
+									"                                }\r",
+									"                            },\r",
+									"                            \"required\": [\r",
+									"                                \"_id\",\r",
+									"                                \"worker\",\r",
+									"                                \"employeer\",\r",
+									"                                \"job\",\r",
+									"                                \"fileAttach\",\r",
+									"                                \"flagViolation\",\r",
+									"                                \"violationDescription\",\r",
+									"                                \"status\",\r",
+									"                                \"startDate\",\r",
+									"                                \"dueDate\",\r",
+									"                                \"createdAt\",\r",
+									"                                \"updatedAt\",\r",
+									"                                \"__v\"\r",
+									"                            ]\r",
+									"                        }\r",
+									"                    ]\r",
+									"                }\r",
+									"            },\r",
+									"            \"required\": [\r",
+									"                \"data\"\r",
+									"            ]\r",
+									"        }\r",
+									"    },\r",
+									"    \"required\": [\r",
+									"        \"success\",\r",
+									"        \"message\",\r",
+									"        \"data\"\r",
+									"    ]\r",
+									"}\r",
+									"const workerContract = jsonData.data.data;\r",
+									"const succesGetContractWorkerSchema = succesGetContractSchema.properties.data.properties.data.items[0];\r",
+									"pm.collectionVariables.set(\"contractId\", jsonData.data.data[0]._id);\r",
+									"\r",
+									"\r",
+									"//Test\r",
+									"\r",
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response 200 success\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Message response success\", () => {\r",
+									"    pm.expect(jsonData.message).to.be.eql(\"Success to get Contract Data\")\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Success Schema\", () => {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(succesGetContractSchema);\r",
+									"})\r",
+									"\r",
+									"eval(pm.collectionVariables.get(\"SchemaValidation\"))\r",
+									"    (\"WorkerGetContract\", succesGetContractWorkerSchema, workerContract);\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/contract/get-contract",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"contract",
+								"get-contract"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Succes-Create-Contract",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//set svariable\r",
+									"const jsonData = pm.response.json();\r",
+									"const successCreateContractSchema = {\r",
+									"  \"type\": \"object\",\r",
+									"  \"properties\": {\r",
+									"    \"success\": {\r",
+									"      \"type\": \"boolean\"\r",
+									"    },\r",
+									"    \"message\": {\r",
+									"      \"type\": \"string\"\r",
+									"    },\r",
+									"    \"data\": {\r",
+									"      \"type\": \"object\"\r",
+									"    }\r",
+									"  },\r",
+									"  \"required\": [\r",
+									"    \"success\",\r",
+									"    \"message\",\r",
+									"    \"data\"\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"\r",
+									"//Test\r",
+									"pm.test(\"Success Schema\", () => {\r",
+									"    pm.expect(jsonData).to.have.jsonSchema(successCreateContractSchema);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Response 200 success\", () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Message response success\", () => {\r",
+									"    pm.expect(jsonData.message).to.be.eql(\"Success Create new Contract\")\r",
+									"})\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "fileAttach",
+								"value": "{{",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "fileAttach",
+									"value": "{{$randomImageUrl}}",
+									"type": "text"
+								},
+								{
+									"key": "flagViolation",
+									"value": "0",
+									"type": "text"
+								},
+								{
+									"key": "violationDescription",
+									"value": "{{$randomBsNoun}}",
+									"type": "text"
+								},
+								{
+									"key": "status",
+									"value": "On-progress",
+									"type": "text"
+								},
+								{
+									"key": "startDate",
+									"value": "{{$randomDateRecent}}",
+									"type": "text"
+								},
+								{
+									"key": "dueDate",
+									"value": "{{$randomDateFuture}}",
+									"type": "text"
+								},
+								{
+									"key": "worker",
+									"value": "{{userId}}",
+									"type": "text"
+								},
+								{
+									"key": "job",
+									"value": "61821009ed956d0580d99810",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/contract/create?fileAttach={{$randomImageUrl}}&flagViolation=0&violationDescription={{$randomMimeType}}&status=in-progress&startDate={{$randomDateRecent}}&dueDate={{$randomDateFuture}}&worker={{RandomWorkerId}}&job=61821009ed956d0580d99810",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"contract",
+								"create"
+							],
+							"query": [
+								{
+									"key": "fileAttach",
+									"value": "{{$randomImageUrl}}"
+								},
+								{
+									"key": "flagViolation",
+									"value": "0",
+									"description": "1, 0"
+								},
+								{
+									"key": "violationDescription",
+									"value": "{{$randomMimeType}}"
+								},
+								{
+									"key": "status",
+									"value": "in-progress",
+									"description": "in-progress, "
+								},
+								{
+									"key": "startDate",
+									"value": "{{$randomDateRecent}}"
+								},
+								{
+									"key": "dueDate",
+									"value": "{{$randomDateFuture}}"
+								},
+								{
+									"key": "worker",
+									"value": "{{RandomWorkerId}}"
+								},
+								{
+									"key": "job",
+									"value": "61821009ed956d0580d99810"
+								}
+							]
+						}
+					},
+					"response": []
+				}
 			]
 		}
 	],
@@ -1721,12 +2084,12 @@
 		},
 		{
 			"key": "NestedSchemaValidation",
-			"value": "\n    (name, schema1, schemaIndex, name2, schema2, schemaIndex2) => {\n    for (let response in schemaIndex) {\n        pm.test(name + \" schema validation \" + response, function () {\n            pm.expect(schemaIndex).to.have.jsonSchema(schema1)\n        })\n        for (let response2 in schemaIndex2) {\n            pm.test(name2 + \" schema validation \" + response2, function () {\n                pm.expect(schemaIndex2[response2]).to.have.jsonSchema(schema2)\n            })\n        }\n    }\n}",
+			"value": "(name, schema1, schemaIndex, name2, schema2, schemaIndex2) => {\n    for (let response in schemaIndex) {\n        pm.test(name + \" schema validation \" + response, function () {\n            pm.expect(schemaIndex).to.have.jsonSchema(schema1)\n        })\n        for (let response2 in schemaIndex2) {\n            pm.test(name2 + \" schema validation \" + response2, function () {\n                pm.expect(schemaIndex2[response2]).to.have.jsonSchema(schema2)\n            })\n        }\n    }\n}",
 			"type": "string"
 		},
 		{
 			"key": "SchemaValidation",
-			"value": "(name, schema1, schemaIndex) => {\n    for (let response in schemaIndex) {\n        pm.test(name + \" schema validation \" + response, () => {\n            pm.expect(schemaIndex[response]).to.have.jsonSchema(schema1)\n        })\n    }\n}",
+			"value": "(testName, schema, schemaIndex) => {\n    for (let response in schemaIndex) {\n        pm.test(testName + \" schema validation \" + response, function () {\n            pm.expect(schemaIndex).to.have.jsonSchema(schema)\n        })\n    }\n}\n",
 			"type": "string"
 		},
 		{
@@ -1750,6 +2113,24 @@
 		},
 		{
 			"key": "emailLogin",
+			"value": ""
+		},
+		{
+			"value": ""
+		},
+		{
+			"value": ""
+		},
+		{
+			"key": "userId",
+			"value": ""
+		},
+		{
+			"key": "contractId",
+			"value": ""
+		},
+		{
+			"key": "randomNumber",
 			"value": ""
 		}
 	]
